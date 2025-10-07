@@ -1,0 +1,4 @@
+Flask==2.3.2
+rapidfuzz==2.15.1
+tensorflow
+numpy

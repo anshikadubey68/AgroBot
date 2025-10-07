@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-lg mb-4">
+      <div class="card-body p-4">
+        <h3 class="card-title text-success">Farmer Chat</h3>
+        <p class="text-muted">Type symptoms in your language (Hindi / Bengali / Tamil / Telugu / Punjabi / English) or upload an image of the affected part. Use natural sentences.</p>
+
+        <form method="POST" action="{{ url_for('ask') }}" id="askForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <textarea name="symptom" class="form-control form-control-lg" placeholder="e.g., मेरे पत्तियों पर भूरे धब्बे हैं" rows="3"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="imageInput" class="form-label">Upload Image (optional)</label>
+            <input type="file" name="image" accept="image/*" class="form-control" id="imageInput">
+            <div class="mt-2">
+              <img id="preview" src="#" alt="Image preview" style="max-width: 100%; display: none; border:1px solid #ddd; padding:5px; border-radius:5px;">
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary btn-lg">Ask</button>
+            <button type="reset" class="btn btn-outline-secondary btn-lg" onclick="resetPreview()">Clear</button>
+          </div>
+        </form>
+
+        <div class="mt-4">
+          <h6 class="text-muted">Tip</h6>
+          <p class="small text-muted">If the bot doesn't identify the disease, try describing location of symptom (leaf/fruit/stem), color and progression, or upload a clear image of the affected part.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-3">Knowledge base (preview)</h5>
+        <div class="row gy-3">
+          {% for key, entry in db_symptoms.items() %}
+            <div class="col-md-6">
+              <div class="kb-card p-3">
+                <strong class="d-block">{{ entry.disease }}</strong>
+                <small class="text-muted">{{ key }}</small>
+                <p class="mb-0 mt-2 small">{{ entry.treatments.get('en')[:120] }}{% if entry.treatments.get('en')|length > 120 %}...{% endif %}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm p-3">
+      <h6>Recent Interaction</h6>
+      <div id="resultArea">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for cat, msg in messages %}
+              <div class="alert alert-{{ 'success' if cat=='success' else ('info' if cat=='info' else ('warning' if cat=='warning' else 'danger')) }}">{{ msg }}</div>
+            {% endfor %}
+          {% else %}
+            <div class="text-muted small">No interaction yet. Ask about symptoms or upload an image to get treatment here.</div>
+          {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-3 p-3">
+      <h6>Account</h6>
+      <p class="mb-1">Role: <strong>{{ role }}</strong></p>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+    </div>
+  </div>
+</div>
+
+<!-- JS for image preview -->
+<script>
+  document.getElementById('imageInput').addEventListener('change', function(event){
+    const [file] = event.target.files;
+    if(file){
+      const preview = document.getElementById('preview');
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+    }
+  });
+
+  function resetPreview(){
+    const preview = document.getElementById('preview');
+    preview.src = '#';
+    preview.style.display = 'none';
+  }
+</script>
+{% endblock %}

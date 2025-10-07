@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <div class="card shadow-lg mb-4">
+      <div class="card-body">
+        <h3 class="text-primary">Admin Panel</h3>
+        <p class="text-muted">Add or update symptom entries (translations & treatments).</p>
+
+        <form method="POST" action="{{ url_for('admin_add') }}">
+          <div class="mb-3">
+            <label class="form-label">Symptom key (English canonical)</label>
+            <input name="symptom" class="form-control" placeholder="e.g., yellow leaves" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Disease name</label>
+            <input name="disease" class="form-control" placeholder="e.g., Nitrogen Deficiency">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Translations (fill per language)</label>
+            <div class="row g-2">
+              <div class="col">
+                <input name="s_en" class="form-control form-control-sm" placeholder="English (optional)">
+              </div>
+              <div class="col">
+                <input name="s_hi" class="form-control form-control-sm" placeholder="Hindi">
+              </div>
+              <div class="col">
+                <input name="s_bn" class="form-control form-control-sm" placeholder="Bengali">
+              </div>
+            </div>
+            <div class="row g-2 mt-2">
+              <div class="col">
+                <input name="s_ta" class="form-control form-control-sm" placeholder="Tamil">
+              </div>
+              <div class="col">
+                <input name="s_te" class="form-control form-control-sm" placeholder="Telugu">
+              </div>
+              <div class="col">
+                <input name="s_pa" class="form-control form-control-sm" placeholder="Punjabi">
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Treatments (fill per language)</label>
+            <textarea name="t_en" class="form-control mb-2" placeholder="Treatment in English"></textarea>
+            <textarea name="t_hi" class="form-control mb-2" placeholder="Treatment in Hindi"></textarea>
+            <textarea name="t_bn" class="form-control mb-2" placeholder="Treatment in Bengali"></textarea>
+            <div class="row g-2">
+              <div class="col">
+                <textarea name="t_ta" class="form-control" placeholder="Tamil"></textarea>
+              </div>
+              <div class="col">
+                <textarea name="t_te" class="form-control" placeholder="Telugu"></textarea>
+              </div>
+            </div>
+            <textarea name="t_pa" class="form-control mt-2" placeholder="Punjabi"></textarea>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-success">Save / Update</button>
+            <a class="btn btn-outline-secondary" href="{{ url_for('dashboard') }}">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-3">Existing Knowledge Base (Edit via re-upload of JSON or delete single entries)</h5>
+        <table class="table table-striped small">
+          <thead><tr><th>Symptom key</th><th>Disease</th><th>Actions</th></tr></thead>
+          <tbody>
+            {% for key, entry in db_symptoms.items() %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ entry.disease }}</td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_delete') }}" style="display:inline">
+                  <input type="hidden" name="symptom_key" value="{{ key }}">
+                  <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this entry?')">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm p-3">
+      <h6>Admin Tips</h6>
+      <ul>
+        <li>Always provide English treatment; add local language versions when possible.</li>
+        <li>Use short canonical symptom keys (English) for easier maintenance.</li>
+        <li>To bulk-add, edit the `disease_data.json` then restart the app.</li>
+      </ul>
+      <a class="btn btn-outline-danger" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
