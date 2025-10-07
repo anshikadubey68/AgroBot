@@ -1,0 +1,54 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment folders
+venv/
+env/
+.venv/
+
+# Ignore model checkpoints and large data files
+*.h5
+*.hdf5
+*.pkl
+*.joblib
+
+# Ignore dataset folders (train/test)
+train/
+test/
+dataset/
+data/
+*.csv
+*.zip
+*.tar
+*.gz
+
+# Ignore IDE and system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Ignore Flask session and cache files
+instance/
+*.log
+
+# Ignore build and temporary files
+build/
+dist/
+*.egg-info/
+
+# Ignore notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore node modules (if you used npm for frontend)
+node_modules/
+
+# Ignore your model folders if large
+models/
+
+# Ignore secret/config files
+*.env
+config.json
